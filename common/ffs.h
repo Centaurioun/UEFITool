@@ -33,10 +33,10 @@ extern UString cpdExtensionTypeToUstring(const UINT32 type);
 //*****************************************************************************
 // Capsule header
 typedef struct EFI_CAPSULE_HEADER_ {
-    EFI_GUID  CapsuleGuid;
-    UINT32    HeaderSize;
-    UINT32    Flags;
-    UINT32    CapsuleImageSize;
+    EFI_GUID CapsuleGuid;
+    UINT32   HeaderSize;
+    UINT32   Flags;
+    UINT32   CapsuleImageSize;
 } EFI_CAPSULE_HEADER;
 
 // Capsule flags
@@ -61,10 +61,10 @@ extern const UByteArray LENOVO2_CAPSULE_GUID; // 25B5FE76-8243-4A5C-A9BD-7EE3246
 
 // Toshiba EFI Capsule header
 typedef struct TOSHIBA_CAPSULE_HEADER_ {
-    EFI_GUID  CapsuleGuid;
-    UINT32    HeaderSize;
-    UINT32    FullSize;
-    UINT32    Flags;
+    EFI_GUID CapsuleGuid;
+    UINT32   HeaderSize;
+    UINT32   FullSize;
+    UINT32   Flags;
 } TOSHIBA_CAPSULE_HEADER;
 
 // Toshiba capsule GUID
@@ -72,11 +72,11 @@ extern const UByteArray TOSHIBA_CAPSULE_GUID; // 3BE07062-1D51-45D2-832B-F093257
 
 // AMI Aptio extended capsule header
 typedef struct APTIO_CAPSULE_HEADER_ {
-    EFI_CAPSULE_HEADER    CapsuleHeader;
-    UINT16                RomImageOffset;  // offset in bytes from the beginning of the capsule header to the start of the capsule volume
-    UINT16                RomLayoutOffset; // offset to the table of the module descriptors in the capsule's volume that are included in the signature calculation
-    //FW_CERTIFICATE      FWCert;
-    //ROM_AREA            RomAreaMap[1];
+    EFI_CAPSULE_HEADER CapsuleHeader;
+    UINT16             RomImageOffset;  // offset in bytes from the beginning of the capsule header to the start of the capsule volume
+    UINT16             RomLayoutOffset; // offset to the table of the module descriptors in the capsule's volume that are included in the signature calculation
+    //FW_CERTIFICATE   FWCert;
+    //ROM_AREA         RomAreaMap[];
 } APTIO_CAPSULE_HEADER;
 
 // AMI Aptio signed extended capsule GUID
@@ -91,22 +91,22 @@ extern const UByteArray APTIO_UNSIGNED_CAPSULE_GUID; // 14EEBB90-890A-43DB-AED1-
 // Firmware block map entry
 // FvBlockMap ends with an entry {0x00000000, 0x00000000}
 typedef struct EFI_FV_BLOCK_MAP_ENTRY_ {
-    UINT32  NumBlocks;
-    UINT32  Length;
+    UINT32 NumBlocks;
+    UINT32 Length;
 } EFI_FV_BLOCK_MAP_ENTRY;
 
 // Volume header
 typedef struct EFI_FIRMWARE_VOLUME_HEADER_ {
-    UINT8                  ZeroVector[16];
-    EFI_GUID               FileSystemGuid;
-    UINT64                 FvLength;
-    UINT32                 Signature;
-    UINT32                 Attributes;
-    UINT16                 HeaderLength;
-    UINT16                 Checksum;
-    UINT16                 ExtHeaderOffset;  //Reserved in Revision 1
-    UINT8                  Reserved;
-    UINT8                  Revision;
+    UINT8    ZeroVector[16];
+    EFI_GUID FileSystemGuid;
+    UINT64   FvLength;
+    UINT32   Signature;
+    UINT32   Attributes;
+    UINT16   HeaderLength;
+    UINT16   Checksum;
+    UINT16   ExtHeaderOffset;  //Reserved in Revision 1
+    UINT8    Reserved;
+    UINT8    Revision;
     //EFI_FV_BLOCK_MAP_ENTRY FvBlockMap[2];
 } EFI_FIRMWARE_VOLUME_HEADER;
 
@@ -224,8 +224,8 @@ extern const std::vector<UByteArray> FFSv3Volumes;
 
 // Extended firmware volume header
 typedef struct EFI_FIRMWARE_VOLUME_EXT_HEADER_ {
-    EFI_GUID          FvName;
-    UINT32            ExtHeaderSize;
+    EFI_GUID FvName;
+    UINT32   ExtHeaderSize;
 } EFI_FIRMWARE_VOLUME_EXT_HEADER;
 
 // Extended header entry
@@ -233,16 +233,16 @@ typedef struct EFI_FIRMWARE_VOLUME_EXT_HEADER_ {
 // terminated by ExtHeaderType EFI_FV_EXT_TYPE_END
 #define EFI_FV_EXT_TYPE_END        0x0000
 typedef struct EFI_FIRMWARE_VOLUME_EXT_ENTRY_ {
-    UINT16  ExtEntrySize;
-    UINT16  ExtEntryType;
+    UINT16 ExtEntrySize;
+    UINT16 ExtEntryType;
 } EFI_FIRMWARE_VOLUME_EXT_ENTRY;
 
 // GUID that maps OEM file types to GUIDs
 #define EFI_FV_EXT_TYPE_OEM_TYPE   0x0001
 typedef struct EFI_FIRMWARE_VOLUME_EXT_HEADER_OEM_TYPE_ {
-    EFI_FIRMWARE_VOLUME_EXT_ENTRY    Header;
-    UINT32                           TypeMask;
-    //EFI_GUID                       Types[];
+    EFI_FIRMWARE_VOLUME_EXT_ENTRY Header;
+    UINT32                        TypeMask;
+    //EFI_GUID                    Types[];
 } EFI_FIRMWARE_VOLUME_EXT_HEADER_OEM_TYPE;
 
 #define EFI_FV_EXT_TYPE_GUID_TYPE  0x0002
@@ -280,10 +280,21 @@ EFI_GUID                Name;
 EFI_FFS_INTEGRITY_CHECK IntegrityCheck;
 UINT8                   Type;
 UINT8                   Attributes;
-UINT8                   Size[3]; // Set to 0xFFFFFF
+UINT8                   Size[3]; // Set to 0xFFFFFF or 0x000000
 UINT8                   State;
 UINT64                  ExtendedSize;
 } EFI_FFS_FILE_HEADER2;
+
+// Lenovo large file header
+typedef struct EFI_FFS_FILE_HEADER2_LENOVO_ {
+EFI_GUID                Name;
+EFI_FFS_INTEGRITY_CHECK IntegrityCheck;
+UINT8                   Type;
+UINT8                   Attributes;
+UINT8                   Size[3]; // Set to 0x000000
+UINT8                   State;
+UINT32                  ExtendedSize;
+} EFI_FFS_FILE_HEADER2_LENOVO;
 
 // Standard data checksum, used if FFS_ATTRIB_CHECKSUM is clear
 #define FFS_FIXED_CHECKSUM   0x5A
@@ -317,8 +328,8 @@ UINT64                  ExtendedSize;
 // File attributes
 #define FFS_ATTRIB_TAIL_PRESENT       0x01 // Valid only for revision 1 volumes
 #define FFS_ATTRIB_RECOVERY           0x02 // Valid only for revision 1 volumes
-#define FFS_ATTRIB_LARGE_FILE         0x01 // Valid only for FFSv3 volumes
-#define FFS_ATTRIB_DATA_ALIGNMENT2    0x02 // Volaid only for revision 2 volumes, added in UEFI PI 1.6
+#define FFS_ATTRIB_LARGE_FILE         0x01 // Valid only for FFSv3 volumes or FFSv2 volumes with Lenovo large files
+#define FFS_ATTRIB_DATA_ALIGNMENT2    0x02 // Valid only for revision 2 volumes, added in UEFI PI 1.6
 #define FFS_ATTRIB_FIXED              0x04
 #define FFS_ATTRIB_DATA_ALIGNMENT     0x38
 #define FFS_ATTRIB_CHECKSUM           0x40
@@ -328,7 +339,6 @@ extern const UINT8 ffsAlignmentTable[];
 
 // Extended FFS alignment table, added in UEFI PI 1.6
 extern const UINT8 ffsAlignment2Table[];
-
 
 // File states
 #define EFI_FILE_HEADER_CONSTRUCTION    0x01
@@ -357,6 +367,9 @@ extern const UByteArray AMI_CORE_DXE_GUID; // 5AE3F37E-4EAE-41AE-8240-35465B5E81
 // EDK2 DXE core file
 extern const UByteArray EFI_DXE_CORE_GUID; // D6A2CB7F-6A18-4E2F-B43B-9920A733700A
 
+// AMD compressed raw file
+extern const UByteArray AMD_COMPRESSED_RAW_FILE_GUID; //20BC8AC9-94D1-4208-AB28-5D673FD73487
+
 // FFS size conversion routines
 extern VOID uint32ToUint24(UINT32 size, UINT8* ffsSize);
 extern UINT32 uint24ToUint32(const UINT8* ffsSize);
@@ -366,23 +379,16 @@ extern UINT32 uint24ToUint32(const UINT8* ffsSize);
 //*****************************************************************************
 // Common section header
 typedef struct EFI_COMMON_SECTION_HEADER_ {
-    UINT8    Size[3];
-    UINT8    Type;
+    UINT8 Size[3];
+    UINT8 Type;
 } EFI_COMMON_SECTION_HEADER;
 
 // Large file common section header
 typedef struct EFI_COMMON_SECTION_HEADER2_ {
-    UINT8    Size[3];    // Must be 0xFFFFFF for this header to be used
-    UINT8    Type;
-    UINT32   ExtendedSize;
+    UINT8  Size[3];    // Must be 0xFFFFFF for this header to be used
+    UINT8  Type;
+    UINT32 ExtendedSize;
 } EFI_COMMON_SECTION_HEADER2;
-
-// Apple common section header
-typedef struct EFI_COMMON_SECTION_HEADER_APPLE {
-    UINT8    Size[3];
-    UINT8    Type;
-    UINT32   Reserved;   // Must be 0x7FFF for this header to be used
-} EFI_COMMON_SECTION_HEADER_APPLE;
 
 // Section2 usage indicator
 #define EFI_SECTION2_IS_USED 0xFFFFFF
@@ -413,14 +419,9 @@ typedef struct EFI_COMMON_SECTION_HEADER_APPLE {
 
 // Compression section
 typedef struct EFI_COMPRESSION_SECTION_ {
-    UINT32   UncompressedLength;
-    UINT8    CompressionType;
+    UINT32 UncompressedLength;
+    UINT8  CompressionType;
 } EFI_COMPRESSION_SECTION;
-
-typedef struct EFI_COMPRESSION_SECTION_APPLE_ {
-    UINT32   UncompressedLength;
-    UINT32   CompressionType;
-} EFI_COMPRESSION_SECTION_APPLE;
 
 // Compression types
 #define EFI_NOT_COMPRESSED                 0x00
@@ -435,13 +436,6 @@ typedef struct EFI_GUID_DEFINED_SECTION_ {
     UINT16   Attributes;
 } EFI_GUID_DEFINED_SECTION;
 
-typedef struct EFI_GUID_DEFINED_SECTION_APPLE_ {
-    EFI_GUID SectionDefinitionGuid;
-    UINT16   DataOffset;
-    UINT16   Attributes;
-    UINT32   Reserved;
-} EFI_GUID_DEFINED_SECTION_APPLE;
-
 // Attributes for GUID defined section
 #define EFI_GUIDED_SECTION_PROCESSING_REQUIRED  0x01
 #define EFI_GUIDED_SECTION_AUTH_STATUS_VALID    0x02
@@ -453,10 +447,19 @@ extern const UByteArray EFI_GUIDED_SECTION_LZMA; // EE4E5898-3914-4259-9D6E-DC7B
 extern const UByteArray EFI_GUIDED_SECTION_LZMA_HP; // 0ED85E23-F253-413F-A03C-901987B04397
 extern const UByteArray EFI_GUIDED_SECTION_LZMAF86; // D42AE6BD-1352-4BFB-909A-CA72A6EAE889
 extern const UByteArray EFI_GUIDED_SECTION_GZIP; // 1D301FE9-BE79-4353-91C2-D23BC959AE0C
+extern const UByteArray EFI_GUIDED_SECTION_ZLIB_AMD; // CE3233F5-2CD6-4D87-9152-4A238BB6D1C4
+extern const UByteArray EFI_GUIDED_SECTION_ZLIB_AMD2; // 991EFAC0-E260-416B-A4B8-3B153072B804
 extern const UByteArray EFI_FIRMWARE_CONTENTS_SIGNED_GUID; // 0F9D89E8-9259-4F76-A5AF-0C89E34023DF
 
-//#define WIN_CERT_TYPE_PKCS_SIGNED_DATA 0x0002
-#define WIN_CERT_TYPE_EFI_GUID         0x0EF1
+#define WIN_CERT_TYPE_EFI_GUID 0x0EF1
+
+// AMD Zlib-compressed section header
+typedef struct EFI_AMD_ZLIB_SECTION_HEADER_ {
+    UINT8    ZeroHeader[0x14];
+    UINT32   CompressedSize;
+    UINT8    ZeroFooter[0x100 - sizeof(UINT32) - 0x14];
+    //UINT8  CompressedData[]
+} EFI_AMD_ZLIB_SECTION_HEADER;
 
 typedef struct WIN_CERTIFICATE_ {
     UINT32  Length;
@@ -466,9 +469,9 @@ typedef struct WIN_CERTIFICATE_ {
 } WIN_CERTIFICATE;
 
 typedef struct WIN_CERTIFICATE_UEFI_GUID_ {
-    WIN_CERTIFICATE   Header;     // Standard WIN_CERTIFICATE
-    EFI_GUID          CertType;   // Determines format of CertData
-    // UINT8          CertData[]; // Certificate data follows
+    WIN_CERTIFICATE Header;     // Standard WIN_CERTIFICATE
+    EFI_GUID        CertType;   // Determines format of CertData
+    // UINT8        CertData[]; // Certificate data follows
 } WIN_CERTIFICATE_UEFI_GUID;
 
 // WIN_CERTIFICATE_UEFI_GUID.CertType
@@ -476,16 +479,16 @@ extern const UByteArray EFI_CERT_TYPE_RSA2048_SHA256_GUID; // A7717414-C616-4977
 
 // WIN_CERTIFICATE_UEFI_GUID.CertData
 typedef struct EFI_CERT_BLOCK_RSA2048_SHA256_ {
-    EFI_GUID  HashType;
-    UINT8     PublicKey[256];
-    UINT8     Signature[256];
+    EFI_GUID HashType;
+    UINT8    PublicKey[256];
+    UINT8    Signature[256];
 } EFI_CERT_BLOCK_RSA2048_SHA256;
 
 extern const UByteArray EFI_HASH_ALGORITHM_SHA256_GUID; // 51AA59DE-FDF2-4EA3-BC63-875FB7842EE9
 
 // Version section
 typedef struct EFI_VERSION_SECTION_ {
-    UINT16   BuildNumber;
+    UINT16 BuildNumber;
 } EFI_VERSION_SECTION;
 
 // Freeform subtype GUID section
@@ -495,11 +498,11 @@ typedef struct EFI_FREEFORM_SUBTYPE_GUID_SECTION_ {
 
 // Phoenix SCT and Insyde postcode section
 typedef struct POSTCODE_SECTION_ {
-    UINT32   Postcode;
+    UINT32 Postcode;
 } POSTCODE_SECTION;
 
 //*****************************************************************************
-// EFI Dependency Expression
+// EFI DXE Dependency Expression
 //*****************************************************************************
 #define EFI_DEP_OPCODE_SIZE   1
 
@@ -587,36 +590,53 @@ typedef struct BPDT_ENTRY_ {
     UINT32 Size;
 } BPDT_ENTRY;
 
-#define BPDT_ENTRY_TYPE_OEM_SMIP         0
-#define BPDT_ENTRY_TYPE_OEM_RBE          1
-#define BPDT_ENTRY_TYPE_CSE_BUP          2
-#define BPDT_ENTRY_TYPE_UCODE            3
-#define BPDT_ENTRY_TYPE_IBB              4
-#define BPDT_ENTRY_TYPE_SBPDT            5
-#define BPDT_ENTRY_TYPE_OBB              6
-#define BPDT_ENTRY_TYPE_CSE_MAIN         7
-#define BPDT_ENTRY_TYPE_ISH              8
-#define BPDT_ENTRY_TYPE_CSE_IDLM         9
-#define BPDT_ENTRY_TYPE_IFP_OVERRIDE     10
-#define BPDT_ENTRY_TYPE_DEBUG_TOKENS     11
-#define BPDT_ENTRY_TYPE_USF_PHY_CONFIG   12
-#define BPDT_ENTRY_TYPE_USF_GPP_LUN_ID   13
-#define BPDT_ENTRY_TYPE_PMC              14
-#define BPDT_ENTRY_TYPE_IUNIT            15
-#define BPDT_ENTRY_TYPE_NVM_CONFIG       16
-#define BPDT_ENTRY_TYPE_UEP              17
-#define BPDT_ENTRY_TYPE_WLAN_UCODE       18
-#define BPDT_ENTRY_TYPE_LOCL_SPRITES     19
-#define BPDT_ENTRY_TYPE_OEM_KEY_MANIFEST 20
-#define BPDT_ENTRY_TYPE_DEFAULTS         21
-#define BPDT_ENTRY_TYPE_PAVP             22
-#define BPDT_ENTRY_TYPE_TCSS_FW_IOM      23
-#define BPDT_ENTRY_TYPE_TCSS_FW_PHY      24
-#define BPDT_ENTRY_TYPE_TBT              25
-#define BPDT_ENTRY_TYPE_USB_PHY          31
-#define BPDT_ENTRY_TYPE_PCHC             32
-#define BPDT_ENTRY_TYPE_SAMF             41
-#define BPDT_ENTRY_TYPE_PPHY             42
+// https://github.com/platomav/MEAnalyzer/blob/master/MEA.py#L10595
+#define BPDT_ENTRY_TYPE_SMIP        0
+#define BPDT_ENTRY_TYPE_RBEP        1
+#define BPDT_ENTRY_TYPE_FTPR        2
+#define BPDT_ENTRY_TYPE_UCOD        3
+#define BPDT_ENTRY_TYPE_IBBP        4
+#define BPDT_ENTRY_TYPE_S_BPDT      5
+#define BPDT_ENTRY_TYPE_OBBP        6
+#define BPDT_ENTRY_TYPE_NFTP        7
+#define BPDT_ENTRY_TYPE_ISHC        8
+#define BPDT_ENTRY_TYPE_DLMP        9
+#define BPDT_ENTRY_TYPE_UEBP        10
+#define BPDT_ENTRY_TYPE_UTOK        11
+#define BPDT_ENTRY_TYPE_UFS_PHY     12
+#define BPDT_ENTRY_TYPE_UFS_GPP_LUN 13
+#define BPDT_ENTRY_TYPE_PMCP        14
+#define BPDT_ENTRY_TYPE_IUNP        15
+#define BPDT_ENTRY_TYPE_NVMC        16
+#define BPDT_ENTRY_TYPE_UEP         17
+#define BPDT_ENTRY_TYPE_WCOD        18
+#define BPDT_ENTRY_TYPE_LOCL        19
+#define BPDT_ENTRY_TYPE_OEMP        20
+#define BPDT_ENTRY_TYPE_FITC        21
+#define BPDT_ENTRY_TYPE_PAVP        22
+#define BPDT_ENTRY_TYPE_IOMP        23
+#define BPDT_ENTRY_TYPE_XPHY        24
+#define BPDT_ENTRY_TYPE_TBTP        25
+#define BPDT_ENTRY_TYPE_PLTS        26
+#define BPDT_ENTRY_TYPE_RES27       27
+#define BPDT_ENTRY_TYPE_RES28       28
+#define BPDT_ENTRY_TYPE_RES29       29
+#define BPDT_ENTRY_TYPE_RES30       30
+#define BPDT_ENTRY_TYPE_DPHY        31
+#define BPDT_ENTRY_TYPE_PCHC        32
+#define BPDT_ENTRY_TYPE_ISIF        33
+#define BPDT_ENTRY_TYPE_ISIC        34
+#define BPDT_ENTRY_TYPE_HBMI        35
+#define BPDT_ENTRY_TYPE_OMSM        36
+#define BPDT_ENTRY_TYPE_GTGP        37
+#define BPDT_ENTRY_TYPE_MDFI        38
+#define BPDT_ENTRY_TYPE_PUNP        39
+#define BPDT_ENTRY_TYPE_PHYP        40
+#define BPDT_ENTRY_TYPE_SAMF        41
+#define BPDT_ENTRY_TYPE_PPHY        42
+#define BPDT_ENTRY_TYPE_GBST        43
+#define BPDT_ENTRY_TYPE_TCCP        44
+#define BPDT_ENTRY_TYPE_PSEP        45
 
 // CPD
 #define CPD_SIGNATURE 0x44504324 //$CPD
@@ -815,8 +835,11 @@ typedef struct PROTECTED_RANGE_VENDOR_HASH_FILE_HEADER_AMI_V2_
 typedef struct PROTECTED_RANGE_VENDOR_HASH_FILE_HEADER_AMI_V3_
 {
     UINT8 Hash[SHA256_HASH_SIZE];
-    // UINT32 Base[SOME_HARDCODED_N]
-    // UINT32 Size[SOME_HARDCODED_N];
+    UINT32 FvMainSegmentBase[3];
+    UINT32 FvMainSegmentSize[3];
+    UINT32 NestedFvBase;
+    UINT32 NestedFvSize;
+    UINT8  Reserved[48];
 } PROTECTED_RANGE_VENDOR_HASH_FILE_HEADER_AMI_V3;
 
 //

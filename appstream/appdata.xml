@@ -9,11 +9,11 @@
   </description>
   <screenshots>
     <screenshot type="default">
-      <image type="source">https://github.com/LongSoft/UEFITool/blob/new_engine/appstream/UEFITool.png?raw=true</image>
+      <image type="source">https://github.com/LongSoft/UEFITool/raw/new_engine/appstream/UEFITool.png</image>
     </screenshot>
   </screenshots>
   <releases>
-    <release version="A61" date="2022-09-10" />
+    <release version="A67" date="2023-06-19" />
   </releases>
   <url type="homepage">https://github.com/LongSoft/UEFITool</url>
   <developer_name>LongSoft</developer_name>

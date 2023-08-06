@@ -81,6 +81,10 @@ extern const UByteArray AMI_CORE_DXE_GUID // 5AE3F37E-4EAE-41AE-8240-35465B5E81E
 // EDK2 DXE core file
 extern const UByteArray EFI_DXE_CORE_GUID // D6A2CB7F-6A18-4E2F-B43B-9920A733700A
 ("\x7F\xCB\xA2\xD6\x18\x6A\x2F\x4E\xB4\x3B\x99\x20\xA7\x33\x70\x0A", 16);
+// AMD compressed raw file
+extern const UByteArray AMD_COMPRESSED_RAW_FILE_GUID //20BC8AC9-94D1-4208-AB28-5D673FD73487
+("\xC9\x8A\xBC\x20\xD1\x94\x08\x42\xAB\x28\x5D\x67\x3F\xD7\x34\x87", 16);
+
 // GUIDs of GUID-defined sections
 extern const UByteArray EFI_GUIDED_SECTION_CRC32 // FC1BCDB0-7D31-49AA-936A-A4600D9DD083
 ("\xB0\xCD\x1B\xFC\x31\x7D\xAA\x49\x93\x6A\xA4\x60\x0D\x9D\xD0\x83", 16);
@@ -94,6 +98,10 @@ extern const UByteArray EFI_GUIDED_SECTION_LZMAF86 // D42AE6BD-1352-4BFB-909A-CA
 ("\xBD\xE6\x2A\xD4\x52\x13\xFB\x4B\x90\x9A\xCA\x72\xA6\xEA\xE8\x89", 16);
 extern const UByteArray EFI_GUIDED_SECTION_GZIP // 1D301FE9-BE79-4353-91C2-D23BC959AE0C
 ("\xE9\x1F\x30\x1D\x79\xBE\x53\x43\x91\xC2\xD2\x3B\xC9\x59\xAE\x0C", 16);
+extern const UByteArray EFI_GUIDED_SECTION_ZLIB_AMD // CE3233F5-2CD6-4D87-9152-4A238BB6D1C4
+("\xF5\x33\x32\xCE\xD6\x2C\x87\x4D\x91\x52\x4A\x23\x8B\xB6\xD1\xC4", 16);
+extern const UByteArray EFI_GUIDED_SECTION_ZLIB_AMD2 // 991EFAC0-E260-416B-A4B8-3B153072B804
+("\xC0\xFA\x1E\x99\x60\xE2\x6B\x41\xA4\xB8\x3B\x15\x30\x72\xB8\x04", 16);
 extern const UByteArray EFI_FIRMWARE_CONTENTS_SIGNED_GUID // 0F9D89E8-9259-4F76-A5AF-0C89E34023DF
 ("\xE8\x89\x9D\x0F\x59\x92\x76\x4F\xA5\xAF\x0C\x89\xE3\x40\x23\xDF", 16);
 extern const UByteArray EFI_CERT_TYPE_RSA2048_SHA256_GUID // A7717414-C616-4977-9420-844712A735BF
@@ -274,36 +282,52 @@ UString sectionTypeToUString(const UINT8 type)
 UString bpdtEntryTypeToUString(const UINT16 type)
 {
     switch (type) {
-        case BPDT_ENTRY_TYPE_OEM_SMIP:           return UString("OEM SMIP");
-        case BPDT_ENTRY_TYPE_OEM_RBE:            return UString("CSE RBE");
-        case BPDT_ENTRY_TYPE_CSE_BUP:            return UString("CSE BUP");
-        case BPDT_ENTRY_TYPE_UCODE:              return UString("uCode");
-        case BPDT_ENTRY_TYPE_IBB:                return UString("IBB");
-        case BPDT_ENTRY_TYPE_SBPDT:              return UString("S-BPDT");
-        case BPDT_ENTRY_TYPE_OBB:                return UString("OBB");
-        case BPDT_ENTRY_TYPE_CSE_MAIN:           return UString("CSE Main");
-        case BPDT_ENTRY_TYPE_ISH:                return UString("ISH");
-        case BPDT_ENTRY_TYPE_CSE_IDLM:           return UString("CSE IDLM");
-        case BPDT_ENTRY_TYPE_IFP_OVERRIDE:       return UString("IFP Override");
-        case BPDT_ENTRY_TYPE_DEBUG_TOKENS:       return UString("Debug Tokens");
-        case BPDT_ENTRY_TYPE_USF_PHY_CONFIG:     return UString("USF Phy Config");
-        case BPDT_ENTRY_TYPE_USF_GPP_LUN_ID:     return UString("USF GPP LUN ID");
-        case BPDT_ENTRY_TYPE_PMC:                return UString("PMC");
-        case BPDT_ENTRY_TYPE_IUNIT:              return UString("iUnit");
-        case BPDT_ENTRY_TYPE_NVM_CONFIG:         return UString("NVM Config");
-        case BPDT_ENTRY_TYPE_UEP:                return UString("UEP");
-        case BPDT_ENTRY_TYPE_WLAN_UCODE:         return UString("WLAN uCode");
-        case BPDT_ENTRY_TYPE_LOCL_SPRITES:       return UString("LOCL Sprites");
-        case BPDT_ENTRY_TYPE_OEM_KEY_MANIFEST:   return UString("OEM Key Manifest");
-        case BPDT_ENTRY_TYPE_DEFAULTS:           return UString("Defaults");
-        case BPDT_ENTRY_TYPE_PAVP:               return UString("PAVP");
-        case BPDT_ENTRY_TYPE_TCSS_FW_IOM:        return UString("TCSS FW IOM");
-        case BPDT_ENTRY_TYPE_TCSS_FW_PHY:        return UString("TCSS FW PHY");
-        case BPDT_ENTRY_TYPE_TBT:                return UString("TCSS TBT");
-        case BPDT_ENTRY_TYPE_USB_PHY:            return UString("USB PHY");
-        case BPDT_ENTRY_TYPE_PCHC:               return UString("PCHC");
-        case BPDT_ENTRY_TYPE_SAMF:               return UString("SAMF");
-        case BPDT_ENTRY_TYPE_PPHY:               return UString("PPHY");
+        case BPDT_ENTRY_TYPE_SMIP:        return UString("OEM SMIP");
+        case BPDT_ENTRY_TYPE_RBEP:        return UString("ROM Boot Extensions");
+        case BPDT_ENTRY_TYPE_FTPR:        return UString("Bring Up");
+        case BPDT_ENTRY_TYPE_UCOD:        return UString("Microcode");
+        case BPDT_ENTRY_TYPE_IBBP:        return UString("IBB");
+        case BPDT_ENTRY_TYPE_S_BPDT:      return UString("Secondary BPDT");
+        case BPDT_ENTRY_TYPE_OBBP:        return UString("OBB");
+        case BPDT_ENTRY_TYPE_NFTP:        return UString("Main");
+        case BPDT_ENTRY_TYPE_ISHC:        return UString("ISH");
+        case BPDT_ENTRY_TYPE_DLMP:        return UString("Debug Launch Module");
+        case BPDT_ENTRY_TYPE_UEBP:        return UString("IFP Bypass");
+        case BPDT_ENTRY_TYPE_UTOK:        return UString("Debug Tokens");
+        case BPDT_ENTRY_TYPE_UFS_PHY:     return UString("UFS PHY Config");
+        case BPDT_ENTRY_TYPE_UFS_GPP_LUN: return UString("UFS GPP LUN");
+        case BPDT_ENTRY_TYPE_PMCP:        return UString("PMC");
+        case BPDT_ENTRY_TYPE_IUNP:        return UString("iUnit");
+        case BPDT_ENTRY_TYPE_NVMC:        return UString("NVM Config");
+        case BPDT_ENTRY_TYPE_UEP:         return UString("Unified Emulation");
+        case BPDT_ENTRY_TYPE_WCOD:        return UString("WLAN Microcode");
+        case BPDT_ENTRY_TYPE_LOCL:        return UString("LOCL Sprites");
+        case BPDT_ENTRY_TYPE_OEMP:        return UString("OEM Key Manifest");
+        case BPDT_ENTRY_TYPE_FITC:        return UString("fitc.cfg");
+        case BPDT_ENTRY_TYPE_PAVP:        return UString("PAVP");
+        case BPDT_ENTRY_TYPE_IOMP:        return UString("TCSS FW IOM");
+        case BPDT_ENTRY_TYPE_XPHY:        return UString("TCSS FW PHY");
+        case BPDT_ENTRY_TYPE_TBTP:        return UString("TCSS TBT");
+        case BPDT_ENTRY_TYPE_PLTS:        return UString("Platform Settings");
+        case BPDT_ENTRY_TYPE_RES27:       return UString("Reserved 27");
+        case BPDT_ENTRY_TYPE_RES28:       return UString("Reserved 28");
+        case BPDT_ENTRY_TYPE_RES29:       return UString("Reserved 29");
+        case BPDT_ENTRY_TYPE_RES30:       return UString("Reserved 30");
+        case BPDT_ENTRY_TYPE_DPHY:        return UString("Dekel PHY");
+        case BPDT_ENTRY_TYPE_PCHC:        return UString("PCH Config");
+        case BPDT_ENTRY_TYPE_ISIF:        return UString("ISI FW");
+        case BPDT_ENTRY_TYPE_ISIC:        return UString("ISI Config");
+        case BPDT_ENTRY_TYPE_HBMI:        return UString("HBM IO");
+        case BPDT_ENTRY_TYPE_OMSM:        return UString("OOB MSM");
+        case BPDT_ENTRY_TYPE_GTGP:        return UString("GT-GPU");
+        case BPDT_ENTRY_TYPE_MDFI:        return UString("MDF IO");
+        case BPDT_ENTRY_TYPE_PUNP:        return UString("PUnit");
+        case BPDT_ENTRY_TYPE_PHYP:        return UString("GSC PHY");
+        case BPDT_ENTRY_TYPE_SAMF:        return UString("SAM FW");
+        case BPDT_ENTRY_TYPE_PPHY:        return UString("PPHY");
+        case BPDT_ENTRY_TYPE_GBST:        return UString("GBST");
+        case BPDT_ENTRY_TYPE_TCCP:        return UString("TCC");
+        case BPDT_ENTRY_TYPE_PSEP:        return UString("PSE");
     }
     return usprintf("Unknown %04Xh", type);
 }
